@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Student Marks Tracker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 40px auto;
+            padding: 0 20px;
+            background: #f5f5f5;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        label {
+            display: block;
+            margin-top: 10px;
+            font-weight: bold;
+            color: #555;
+        }
+
+        input {
+            width: 100%;
+            padding: 8px;
+            margin-top: 4px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            margin-top: 16px;
+            padding: 10px 24px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 15px;
+        }
+
+        .error {
+            background: #ffe0e0;
+            border-left: 4px solid red;
+            padding: 10px;
+            margin-top: 16px;
+            color: red;
+        }
+
+        .result {
+            background: #e8f5e9;
+            border-left: 4px solid green;
+            padding: 16px;
+            margin-top: 20px;
+        }
+
+        .result table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        .result td {
+            padding: 8px;
+            border-bottom: 1px solid #ccc;
+        }
+
+        .result td:first-child {
+            font-weight: bold;
+            color: #555;
+            width: 40%;
+        }
+
+        .grade {
+            font-size: 28px;
+            font-weight: bold;
+            color: #007bff;
+        }
+
+        .history {
+            margin-top: 30px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 6px;
+            padding: 12px 16px;
+            margin-top: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+        }
+
+        .card-left {
+            font-size: 14px;
+            color: #333;
+        }
+
+        .card-right {
+            text-align: right;
+            font-size: 13px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Student Marks Tracker</h1>
+
+    <!-- FORM -->
+    <form method="POST">
+        {% csrf_token %}
+
+        <label>Student Name</label>
+        <input type="text" name="name" placeholder="e.g. Arjun Kumar" required>
+
+        <label>Roll Number</label>
+        <input type="text" name="roll_number" placeholder="e.g. CS2024001" required>
+
+        <label>Maths (out of 100)</label>
+        <input type="number" name="maths" placeholder="e.g. 85" min="0" max="100" step="0.1" required>
+
+        <label>Science (out of 100)</label>
+        <input type="number" name="science" placeholder="e.g. 78" min="0" max="100" step="0.1" required>
+
+        <label>English (out of 100)</label>
+        <input type="number" name="english" placeholder="e.g. 90" min="0" max="100" step="0.1" required>
+
+        <button type="submit">Calculate Result</button>
+    </form>
+
+    <!-- ERROR -->
+    {% if error %}
+        <div class="error">{{ error }}</div>
+    {% endif %}
+
+    <!-- RESULT -->
+    {% if result %}
+        <div class="result">
+            <h2>Result for {{ result.name }}</h2>
+            <table>
+                <tr><td>Roll Number</td><td>{{ result.roll_number }}</td></tr>
+                <tr><td>Maths</td><td>{{ result.maths }}</td></tr>
+                <tr><td>Science</td><td>{{ result.science }}</td></tr>
+                <tr><td>English</td><td>{{ result.english }}</td></tr>
+                <tr><td>Total</td><td>{{ result.total }} / 300</td></tr>
+                <tr><td>Percentage</td><td>{{ result.percentage }}%</td></tr>
+                <tr><td>Grade</td><td><span class="grade">{{ result.grade }}</span></td></tr>
+            </table>
+        </div>
+    {% endif %}
+
+    <!-- HISTORY -->
+    <div class="history">
+        <h3>Last 5 Records</h3>
+
+        {% for student in history %}
+            <div class="card">
+                <div class="card-left">
+                    <strong>{{ student.name }}</strong> — {{ student.roll_number }}<br>
+                    Maths: {{ student.maths }} | Science: {{ student.science }} | English: {{ student.english }}
+                </div>
+                <div class="card-right">
+                    <span class="grade" style="font-size:20px;">{{ student.grade }}</span><br>
+                    {{ student.percentage }}%
+                </div>
+            </div>
+        {% empty %}
+            <p style="color:#999;">No records yet.</p>
+        {% endfor %}
+
+    </div>
+
+</body>
+</html>
